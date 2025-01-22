@@ -61,10 +61,9 @@ public class Main {
 			return;
 		}
 
-		int[][] plate = maze[dep];
 		for (int i = 0; i < 4; i++) {
 			dfs(dep + 1);
-			rotatePlate(plate);
+			rotatePlate(dep);
 		}
 	}
 
@@ -105,8 +104,10 @@ public class Main {
 
 	}
 
-	public static void rotatePlate(int[][] plate) {
+	public static void rotatePlate(int z) {
+		int[][] plate = maze[z];
 		int[][] temp = new int[SIZE][SIZE];
+		
 
 		for (int i = 0; i < SIZE; i++) {
 			for (int j = 0; j < SIZE; j++) {
@@ -114,11 +115,7 @@ public class Main {
 			}
 		}
 
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
-				plate[i][j] = temp[i][j];
-			}
-		}
+		maze[z] = temp;
 
 	}
 
