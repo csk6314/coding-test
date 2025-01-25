@@ -2,9 +2,11 @@
 import java.io.*;
 import java.util.*;
 
-public class Main{
+public class Main {
 	static int ans = 0;
 	static Map<Integer,Integer> map = new HashMap<>();
+	static boolean[] visited;
+	static int[] partner;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -14,8 +16,8 @@ public class Main{
 		
 		while(T-->0) {
 			int n = Integer.parseInt(br.readLine());
-			int[] partner = new int[n+1];
-			boolean[] visited = new boolean[n+1];
+			 partner = new int[n+1];
+			visited = new boolean[n+1];
 			
 			String[] input = br.readLine().split(" ");
 			for(int i = 1;i<=n;i++) {
@@ -24,7 +26,7 @@ public class Main{
 			
 			for(int i = 1;i<=n;i++) {
 				if(visited[i]) continue;
-				ans += dfs(i,partner,visited);
+				ans += dfs(i);
 				map.clear();
 			}
 			
@@ -37,7 +39,7 @@ public class Main{
 		System.out.println(sb.toString());
 	}
 	
-	public static int dfs(int cur,int[] partner, boolean[] visited) {
+	public static int dfs(int cur) {
 		int next = partner[cur];
 		visited[cur] = true;
 		map.put(cur, map.size()+1);
@@ -50,6 +52,6 @@ public class Main{
 			return map.size();
 		}
 		
-		return dfs(next,partner,visited);
+		return dfs(next);
 	}
 }
