@@ -1,4 +1,5 @@
 
+
 import java.io.*;
 
 public class Main {
@@ -17,7 +18,10 @@ public class Main {
 		for (int i = 0; i < N - 1; i++) {
 			int lo = i + 1;
 			int hi = N - 1;
-
+			int res = i;
+			
+			
+			
 			while (lo <= hi) {
 				int mid = (lo + hi) / 2;
 
@@ -25,43 +29,27 @@ public class Main {
 
 				if (sum > 0) {
 					hi = mid - 1;
+					
 				} else {
 					lo = mid + 1;
+					res = mid;
 				}
 			}
-			
-			//System.out.println(i + " ====" + hi);
+			// System.out.println(i + " ====" + hi);
 
-			if (hi < i + 1) {
-				int sum = Math.abs(liquids[i] + liquids[i + 1]);
-				if (min >= sum) {
-					min = sum;
-					ans = new int[] { i, i + 1 };
-				}
-				continue;
-			}
-
-			if (hi + 1 > N - 1) {
-				int sum = Math.abs(liquids[i] + liquids[hi]);
-				if (min >= sum) {
-					min = sum;
-					ans = new int[] { i, hi };
-				}
-				continue;
-			}
-
-			int leftSum = Math.abs(liquids[i] + liquids[hi]);
-			int rightSum = Math.abs(liquids[i] + liquids[hi + 1]);
-			
-			if (leftSum < rightSum) {
+			if (res >= i + 1) {
+				int leftSum = Math.abs(liquids[i] + liquids[res]);
 				if (min >= leftSum) {
 					min = leftSum;
-					ans = new int[] { i, hi };
+					ans = new int[] { i, res };
 				}
-			} else {
+			}
+			if (res + 1 < N) {
+				int rightSum = Math.abs(liquids[i] + liquids[res + 1]);
+
 				if (min >= rightSum) {
 					min = rightSum;
-					ans = new int[] { i, hi + 1 };
+					ans = new int[] { i, res + 1 };
 				}
 			}
 
