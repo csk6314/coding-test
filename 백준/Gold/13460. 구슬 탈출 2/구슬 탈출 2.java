@@ -1,5 +1,4 @@
 
-
 import java.util.*;
 import java.io.*;
 
@@ -90,6 +89,10 @@ public class Main {
 					return p.cnt + 1;
 				}
 				
+                int redIdx = nbeads[0].isRed == b1.isRed? 0 : 1;
+				int blueIdx = 1 ^ redIdx;
+				if(nbeads[redIdx].r == b1.r && nbeads[redIdx].c == b1.c && nbeads[blueIdx].r == b2.r && nbeads[blueIdx].c == b2.c) continue;
+                
 				q.offer(new Beads(nbeads,pcnt+1));
 				
 			}
