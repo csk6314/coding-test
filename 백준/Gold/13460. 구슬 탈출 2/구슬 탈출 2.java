@@ -1,12 +1,12 @@
-
 import java.util.*;
 import java.io.*;
 
-public class Main {
+public class Main{
 	static int N, M;
 	static char[][] board;
 	static int[] dr = { 1, 0, -1, 0 };
 	static int[] dc = { 0, 1, 0, -1 };
+	static Map<String, Boolean> history = new HashMap<>();
 
 	static class Bead {
 		int r, c;
@@ -19,16 +19,16 @@ public class Main {
 		}
 
 	}
-	
+
 	static class Beads {
 		Bead[] beads;
 		int cnt;
-		
-		public Beads(Bead[] beads,int cnt) {
+
+		public Beads(Bead[] beads, int cnt) {
 			this.beads = beads;
 			this.cnt = cnt;
 		}
-		
+
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -41,65 +41,72 @@ public class Main {
 
 		Bead[] beads = new Bead[2];
 		int beadIdx = 0;
-		
-		
+
 		for (int i = 0; i < N; i++) {
 			String input = br.readLine();
 			for (int j = 0; j < M; j++) {
 				board[i][j] = input.charAt(j);
 				if (board[i][j] == 'R') {
 					board[i][j] = '.';
-					beads[beadIdx++] = new Bead(i,j,true);
+					beads[beadIdx++] = new Bead(i, j, true);
 					continue;
 				}
 
 				if (board[i][j] == 'B') {
 					board[i][j] = '.';
-					beads[beadIdx++] = new Bead(i,j,false);
+					beads[beadIdx++] = new Bead(i, j, false);
 					continue;
 				}
 			}
 		}
-	//	System.out.println(beads.toString());
+		// System.out.println(beads.toString());
 		System.out.println(bfs(beads));
 	}
-	
+
 	public static int bfs(Bead[] beads) {
 		Queue<Beads> q = new LinkedList<>();
-		
-		q.offer(new Beads(beads,0));
-		while(!q.isEmpty()) {
+
+		q.offer(new Beads(beads, 0));
+		int redIdx = beads[0].isRed ? 0 : 1;
+		history.put(beads[redIdx].r + "," + beads[redIdx].c + "," + beads[1 ^ redIdx].r + "," + beads[1 ^ redIdx].c,
+				true);
+		while (!q.isEmpty()) {
 			Beads p = q.poll();
 			Bead b1 = p.beads[0];
 			Bead b2 = p.beads[1];
 			int pcnt = p.cnt;
-		//	System.out.println(pcnt);
-			if(pcnt > 9) continue;
-			
-			for(int i = 0;i<4;i++) {
+			// System.out.println(pcnt);
+			if (pcnt > 9)
+				continue;
+
+			for (int i = 0; i < 4; i++) {
 				Bead[] nbeads = new Bead[2];
-				nbeads[0] = new Bead(b1.r,b1.c,b1.isRed);
-				nbeads[1] = new Bead(b2.r,b2.c,b2.isRed);
-				
-				int flag = inclineBoard(nbeads,i);
-				if(flag == 2) {
+				nbeads[0] = new Bead(b1.r, b1.c, b1.isRed);
+				nbeads[1] = new Bead(b2.r, b2.c, b2.isRed);
+
+				int flag = inclineBoard(nbeads, i);
+				if (flag == 2) {
 					continue;
 				}
-				if(flag == 1) {
+				if (flag == 1) {
 					return p.cnt + 1;
 				}
-				
-                int redIdx = nbeads[0].isRed == b1.isRed? 0 : 1;
-				int blueIdx = 1 ^ redIdx;
-				if(nbeads[redIdx].r == b1.r && nbeads[redIdx].c == b1.c && nbeads[blueIdx].r == b2.r && nbeads[blueIdx].c == b2.c) continue;
-                
-				q.offer(new Beads(nbeads,pcnt+1));
-				
+
+				int nRedIdx = nbeads[0].isRed ? 0 : 1;
+
+				if (history.containsKey(nbeads[nRedIdx].r + "," + nbeads[nRedIdx].c + "," + nbeads[1 ^ nRedIdx].r + ","
+						+ nbeads[1 ^ nRedIdx].c))
+					continue;
+
+				q.offer(new Beads(nbeads, pcnt + 1));
+                history.put(nbeads[nRedIdx].r + "," + nbeads[nRedIdx].c + "," + nbeads[1 ^ nRedIdx].r + ","
+						+ nbeads[1 ^ nRedIdx].c, true);
 			}
 		}
-		
+
 		return -1;
 	}
+
 	public static int inclineBoard(Bead[] beads, int dir) {
 		// dir 0 = 아래, 1 = 오른쪽, 2 = 위, 3 = 왼쪽
 		// return 0 = keep going, 1 = red out, 2 = blue out
@@ -122,30 +129,30 @@ public class Main {
 				return b1.r - b2.r;
 			}
 		});
-		
+
 		int flag = 0;
-		
-		for (int i = 0;i<beads.length;i++) {
+
+		for (int i = 0; i < beads.length; i++) {
 			Bead b = beads[i];
 			boolean isRed = b.isRed;
 			int nr = b.r + dr[dir];
 			int nc = b.c + dc[dir];
 
 			while (board[nr][nc] == '.' || board[nr][nc] == 'O') {
-				if(flag != 1 && i > 0 && beads[i-1].r == nr && beads[i-1].c == nc) {
+				if (flag != 1 && i > 0 && beads[i - 1].r == nr && beads[i - 1].c == nc) {
 					break;
 				}
-				
+
 				if (board[nr][nc] == 'O') {
-					if(isRed) {
+					if (isRed) {
 						flag = 1;
 						break;
 					}
-					
-					if(!isRed) {
+
+					if (!isRed) {
 						return 2;
 					}
-					
+
 				}
 
 				b.r = nr;
