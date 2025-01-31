@@ -1,11 +1,12 @@
 
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class Main{
 	static int N,M;
 	static boolean[][] map,visited;
-	static int[][][] dp;
+	static int[][] dp;
 	static int[] dr = {1,0,-1,0};
 	static int[] dc = {0,1,0,-1};
 	
@@ -17,7 +18,7 @@ public class Main {
 		
 		map = new boolean[N][M];
 		visited = new boolean[N][M];
-		dp = new int[N][M][2];
+		dp = new int[N][M];
 		
 		
 		for(int i = 0;i<N;i++) {
@@ -30,25 +31,20 @@ public class Main {
 				}
 				
 				if(ch=='1') {
-					dp[i][j][0] = 1;
+					dp[i][j] = 1;
 				}
 			}
 		}
 		
 		int group = 0;
+		ArrayList<Integer> groupSize = new ArrayList<>();
 		
 		for(int i =0;i<N;i++) {
 			for(int j =0;j<M;j++) {
 				if(!visited[i][j] && map[i][j]) {
-					ArrayList<int[]> posList = new ArrayList<>();
-					dfs(i,j,posList);
+					int size = dfs(i,j,group) % 10;
 					
-					int cnt = posList.size() % 10;
-					for(int[] pos: posList) {
-						dp[pos[0]][pos[1]][0] = cnt;
-						dp[pos[0]][pos[1]][1] = group;
-					}
-					
+					groupSize.add(size);
 					group++;
 					
 				}
@@ -64,15 +60,15 @@ public class Main {
 						int nc = j + dc[k];
 						
 						if(nr<0 || nr>= N || nc < 0 || nc>=M) continue;
-						if(groupCheck[dp[nr][nc][1]]) continue;
-						if(map[nr][nc]) {
-							dp[i][j][0] += dp[nr][nc][0];
-							groupCheck[dp[nr][nc][1]] = true;
+				
+						if(map[nr][nc] && !groupCheck[dp[nr][nc]]) {
+							dp[i][j] += groupSize.get(dp[nr][nc]);
+							groupCheck[dp[nr][nc]] = true;
 						}
 						
 					}
 					
-					dp[i][j][0] %= 10;
+					dp[i][j] %= 10;
 				}
 			}
 		}
@@ -82,7 +78,7 @@ public class Main {
 		for(int i =0;i<N;i++) {
 			for(int j = 0;j<M;j++) {
 				if(!map[i][j]) {
-					sb.append(dp[i][j][0]);
+					sb.append(dp[i][j]);
 					continue;
 				}
 				
@@ -94,11 +90,13 @@ public class Main {
 		System.out.println(sb.toString());
 	}
 	
-	public static void dfs(int r, int c, ArrayList<int[]> posList) {
-		if(visited[r][c]) return;
+	public static int dfs(int r, int c, int group) {
+		if(visited[r][c]) return 0;
 		
-		posList.add(new int[] {r,c});
 		visited[r][c] = true;
+		dp[r][c] = group;
+		
+		int size = 1;
 		
 		for(int i = 0;i<4;i++) {
 			int nr = r + dr[i];
@@ -107,9 +105,11 @@ public class Main {
 			if(nr<0 || nr>= N || nc < 0 || nc>=M) continue;
 			
 			if(!visited[nr][nc] && map[nr][nc]) {
-				dfs(nr,nc,posList);
+				size += dfs(nr,nc,group);
 			}
 		}
+		
+		return size;
 		
 	}
 }
