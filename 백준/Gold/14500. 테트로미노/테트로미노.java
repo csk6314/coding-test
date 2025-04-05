@@ -1,3 +1,5 @@
+
+
 import java.io.*;
 
 public class Main {
@@ -29,7 +31,7 @@ public class Main {
 		for(int i = 0;i<N;i++) {
 			for(int j = 0;j<M;j++) {
 				visited[i][j] = true;
-				dfs(new int[] {i,j},null,0,map[i][j],false);
+				dfs(i,j,0,map[i][j]);
 				visited[i][j] = false;
 			}
 		}
@@ -39,7 +41,7 @@ public class Main {
 		
 	}
 	
-	public static void dfs(int[] current, int[] prev,int cnt,int sum,boolean isMutate) {
+	public static void dfs(int r,int c,int cnt,int sum) {
 		
 	//	System.out.println(sum + " " + cnt);
 		if(cnt == 3) {
@@ -48,19 +50,26 @@ public class Main {
 			return;
 		}
 		
-		if(cnt == 2 && !isMutate) {
-			dfs(prev,current,cnt,sum,true);
-		}
+		
+		
+		
 		
 		for(int i = 0;i<4;i++) {
-			int nr = current[0] + dr[i];
-			int nc = current[1] + dc[i];
+			int nr = r + dr[i];
+			int nc = c + dc[i];
 			
 			if(nr < 0 || nr >= N || nc < 0 || nc >= M) continue;
 			
 			if(!visited[nr][nc]) {
+				
+				if(cnt == 1) {
+					visited[nr][nc] = true;
+					dfs(r,c,cnt+1,sum+map[nr][nc]);
+					visited[nr][nc] = false;
+				}
+				
 				visited[nr][nc] = true;
-				dfs(new int[] {nr,nc},current,cnt+1,sum + map[nr][nc],false);
+				dfs(nr,nc,cnt+1,sum + map[nr][nc]);
 				visited[nr][nc] = false;
 			}
 		}
