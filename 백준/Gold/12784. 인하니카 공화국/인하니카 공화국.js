@@ -5,22 +5,22 @@ const inputs = fs.readFileSync(filePath).toString().split("\n");
 const T = +inputs[0];
 let reading = 1;
 
-const dfs = (parent, current, dp,adj) => {
+const dfs = (parent, current, adj) => {
     let sum = 0;
 
     for(const [child, w] of adj[current]) {
         if(child !== parent) {
-            dfs(current, child,dp,adj);
-            sum += Math.min(dp[child],w);
+            const subValue = dfs(current, child,adj);
+            sum += Math.min(subValue,w);
         }
     }
 
-    dp[current] = sum > 0 ? sum : dp[current];
+    return (sum === 0) ? Number.MAX_VALUE : sum;
 }
 
 for(let t = 0;t<T;t++) {
     const [N, M] = inputs[reading++].split(" ").map((v)=>+v);
-    
+
     if(N === 1) {
         console.log(0);
         continue;
@@ -33,10 +33,8 @@ for(let t = 0;t<T;t++) {
         adj[src].push([target, w]);
         adj[target].push([src,w]);
     }
-    const dp = new Array(N+1).fill(Number.MAX_VALUE);
-    dfs(0,1,dp,adj);
 
-    console.log(dp[1]);
+    console.log(dfs(0,1,adj));
 }
 
 
